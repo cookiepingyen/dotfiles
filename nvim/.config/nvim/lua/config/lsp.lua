@@ -7,8 +7,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local opts = { buffer = ev.buf, silent = true }
 
     -- set keybinds
-    opts.desc = "Show LSP references"
-    keymap.set("n", "lr", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
+    -- opts.desc = "Show LSP references"
+    -- keymap.set("n", "lr", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
 
     opts.desc = "Go to declaration"
     keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
@@ -16,11 +16,11 @@ vim.api.nvim_create_autocmd("LspAttach", {
     opts.desc = "Show LSP definition"
     keymap.set("n", "gd", vim.lsp.buf.definition, opts) -- show lsp definition
 
-    opts.desc = "Show LSP implementations"
-    keymap.set("n", "li", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
+    -- opts.desc = "Show LSP implementations"
+    -- keymap.set("n", "li", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
 
-    opts.desc = "Show LSP type definitions"
-    keymap.set("n", "lt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
+    -- opts.desc = "Show LSP type definitions"
+    -- keymap.set("n", "lt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
 
     opts.desc = "See available code actions"
     keymap.set({ "n", "v" }, "<localleader>la", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection

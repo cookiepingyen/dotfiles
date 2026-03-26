@@ -6,7 +6,7 @@ return {
       ensure_installed = {
         "html",
         "cssls",
-        "tailwindcss",
+        -- "tailwindcss",
         -- "lua_ls",
         "eslint",
         "jsonls",

@@ -106,7 +106,8 @@ keymap("n", "<leader>mr", "oSee merge request metis/nerv!", term_opts)
 keymap("v", "<Leader>y", '"+y', opts)
 keymap("n", "<Leader>P", '"+p', opts)
 keymap("n", "<Leader>y", '"+y', opts)
-keymap("n", "<Leader>fy", ":let @+ = expand('%')<cr>:echo 'filename copied!'<cr>", opts)
+keymap("n", "<Leader>fy", ":let @+ = expand('%')<cr>:echo 'filepath copied!'<cr>", opts)
+keymap("n", "<Leader>cp", ":let @+ = expand('%:.')<cr>:echo 'relative path copied!'<cr>", opts)
 
 -- window
 keymap("n", "<leader>w", "<C-w>", opts)

@@ -120,6 +120,7 @@ export RIPGREP_CONFIG_PATH=~/.ripgreprc
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
+export PATH="/root/npm-global/bin:$PATH"
 
 # Git
 alias gs='git status'
@@ -148,6 +149,10 @@ alias gff='git checkout -b $(git branch --show-current)-fork'
 alias glcs='git rev-parse --short=12 HEAD'
 alias glg='git log --all --grep'
 alias gls='git log -S -p'
+
+alias gbc='git checkout -b'
+alias gbd='git branch -D'
+alias gcam='git commit --amend --verbose'
 
 alias lg='lazygit'
 alias lzd='lazydocker'
@@ -244,6 +249,9 @@ alias rat='clj -M:test:runner --watch'
 alias dk='docker'
 alias dco='docker compose'
 alias dcn='docker container'
+
+# log_dump
+alias log_dump='../../project/vm/scripts/log_dump'
 
 ########################
 # eza

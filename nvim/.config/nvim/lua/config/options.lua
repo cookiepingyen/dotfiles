@@ -27,6 +27,7 @@ local options = {
   signcolumn = "yes",
   wildignore = "log/**,node_modules/**,target/**,tmp/**,*.rbc",
   list = true,
+  clipboard = 'unnamed',  -- 加入這句
   -- foldmethod     = "expr",
   -- foldexpr       = "nvim_treesitter#foldexpr()",
 }
@@ -45,3 +46,16 @@ vim.opt.diffopt = vim.opt.diffopt + "vertical"
 -- change SpellBad style, have to do this after colorscheme setup, otherwise will be overwritten
 vim.cmd([[hi SpellBad ctermbg=20]])
 vim.cmd([[hi Winseparator guibg=none]])
+
+-- copy --
+vim.g.clipboard = {
+  name = "socat",
+  copy = {
+    ["+"] = "nc -N host.docker.internal 8377",
+    ["*"] = "nc -N host.docker.internal 8377",
+  },
+  paste = {
+    ["+"] = "nc host.docker.internal 8378",
+    ["*"] = "nc host.docker.internal 8378",
+  },
+}

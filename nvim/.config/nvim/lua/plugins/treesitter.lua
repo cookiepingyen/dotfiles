@@ -7,6 +7,7 @@ return {
   -- syntax highlighting.
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = 'master',
     version = false, -- last release is way too old and doesn't work on Windows
     build = ":TSUpdate",
     event = { "VeryLazy" },
