@@ -121,6 +121,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
 export PATH="/root/npm-global/bin:$PATH"
+export GITLAB_TOKEN=glpat-1zqpMfdffQ9OYP1GVpk7Zm86MQp1OjFwCA.01.0y06hsnln
 
 # Git
 alias gs='git status'
@@ -311,3 +312,15 @@ fi
 export RUBY_LSP_BYPASS_TYPECHECKER=true
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
+export PATH="$HOME/.local/bin:$PATH"
+
+# bun completions
+[ -s "/root/.bun/_bun" ] && source "/root/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
