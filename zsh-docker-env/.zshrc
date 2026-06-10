@@ -152,7 +152,9 @@ alias glg='git log --all --grep'
 alias gls='git log -S -p'
 
 alias gbc='git checkout -b'
+alias grm='git rebase master'
 alias gbd='git branch -D'
+alias gbD='git branch --merged | grep -v -E "^\*|^\s*(master|main|nerv_ck|nerv_sg|nerv_hk|nerv_ave_ck|nerv|perv|yen)" | xargs -r -n1 git branch -d'
 alias gcam='git commit --amend --verbose'
 
 alias lg='lazygit'
