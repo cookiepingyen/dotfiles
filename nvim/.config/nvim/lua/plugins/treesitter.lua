@@ -143,8 +143,7 @@ return {
           return true
         end, opts.ensure_installed)
       end
-      -- [Update tree-sitter config init.lua](https://github.com/Hashino/minimal.nvim/pull/6)
-      require("nvim-treesitter").setup(opts)
+      require("nvim-treesitter.configs").setup(opts)
     end,
   },
 

@@ -186,6 +186,7 @@ return {
   "tpope/vim-unimpaired",
   {
     'stevearc/aerial.nvim',
+    branch = "nvim-0.11",
     opts = {},
     -- Optional dependencies
     dependencies = {
