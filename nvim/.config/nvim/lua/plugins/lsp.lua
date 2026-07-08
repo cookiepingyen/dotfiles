@@ -20,13 +20,10 @@ return {
           function(server_name)
             require("lspconfig")[server_name].setup({})
           end,
-          rubocop = function()
-            require("lspconfig").rubocop.setup({
-              cmd = { "bundle", "exec", "rubocop", "--lsp" },
-            })
-          end,
         },
       })
+      -- rubocop's bundled version predates --lsp support (see none-ls diagnostics.rubocop below instead)
+      vim.lsp.enable("rubocop", false)
     end,
     dependencies = {
       {
@@ -74,7 +71,10 @@ return {
           diagnostics.trail_space,
           diagnostics.todo_comments,
           diagnostics.yamllint,
-          diagnostics.erb_lint,
+          diagnostics.rubocop.with({
+            command = "bundle",
+            args = { "exec", "rubocop", "-f", "json", "--force-exclusion", "--stdin", "$FILENAME" },
+          }),
         }
       }
     end,
