@@ -1,0 +1,48 @@
+{
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "permissions": {
+    "allow": [
+      "Bash(bin/rails t:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git log:*)",
+      "Bash(git status)",
+      "Bash(rails test:*)",
+      "Read(/project/**)",
+      "Read(~/.claude/**)",
+      "Edit(/project/**/*.md)",
+      "Edit(~/.claude/skills/make-markdown/**)",
+      "Skill(commit)",
+      "Skill(commit-update)",
+      "Skill(make-markdown)",
+      "Skill(mr-read)",
+      "Skill(mr-review)",
+      "Skill(read-markdown)",
+      "Skill(screenshots-read)"
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline.sh"
+  },
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true,
+    "skill-creator@claude-plugins-official": true,
+    "ponytail@ponytail": true
+  },
+  "extraKnownMarketplaces": {
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    }
+  },
+  "alwaysThinkingEnabled": false,
+  "tui": "fullscreen",
+  "model": "opus"
+}
