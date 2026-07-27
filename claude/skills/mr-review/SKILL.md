@@ -1,0 +1,260 @@
+---
+name: mr-review
+description: Perform a comprehensive code review workflow on the current branch changes. Gathers business context, analyzes diffs, and generates structured review output with prioritized issues.
+context: fork
+agent: general-purpose
+---
+
+Perform a comprehensive code review workflow on the current branch changes.
+
+## Arguments
+
+- `$ARGUMENTS`: Base branch to compare against (default: `master`)
+  - Example: `/mr-review main` or `/mr-review develop`
+
+## Workflow Steps
+
+### Step 1: Gather Business Context
+
+1. **Read context file** (if exists):
+   - Check for `.claude/context.md` in the project root
+   - This file contains business logic, specs, and system design prepared by the developer
+   - Use this context to verify implementation alignment
+
+2. **Scan CLAUDE.md for relevant docs**:
+   - Read the project's `CLAUDE.md` (documentation TOC)
+   - Based on the changed files/features, identify relevant docs mentioned
+   - Read those docs to understand related requirements and design decisions
+
+3. **Check for testing philosophy** (if test files changed):
+   - Look for `docs/rails_testing_philosophy.md` in the project root
+   - If found, read it and use as additional criteria for reviewing test changes
+   - Apply these project-specific testing standards alongside general test review
+
+4. **Keep this context in mind** for subsequent review steps to verify:
+   - Implementation aligns with business requirements
+   - Edge cases from specs are handled
+   - Design decisions are followed
+   - Test changes follow project's testing philosophy (if available)
+
+### Step 2: Read Reviewer Feedback (if exists)
+
+1. Check for `.claude/reviewer-feedback.md`
+2. If exists:
+   - Parse all reviewer items (they have structured format from `/process-reviewer-feedback`)
+   - Store items for merging in Step 3
+   - Reviewer items take priority for overlapping concerns
+3. If not exists:
+   - Continue with AI-only review (no reviewer feedback to merge)
+
+### Step 3: Get the Diff
+
+1. Determine base branch: Use `$ARGUMENTS` if provided, otherwise `master`
+2. Run `git diff <base-branch>...HEAD` to get all changes on this branch
+3. If empty, try `git diff HEAD~1` for the latest commit
+4. **If still no diff found, STOP and report error:**
+   ```
+   Error: No changes found to review.
+   - No diff between current branch and <base-branch>
+   - No changes in the latest commit
+   Please ensure you have uncommitted or committed changes to review.
+   ```
+
+### Step 4: Dead Code Analysis
+
+Before reviewing, search for code made dead by this MR's changes:
+
+1. **From the diff, extract:**
+   - Methods/functions that were **deleted or renamed**
+   - Methods/functions whose **callers were removed** (e.g., a call site was deleted)
+   - Conditions/guards that make downstream code **unreachable**
+
+2. **For each candidate, search the codebase** (using `rg` or grep):
+   - Search for references to the method/function name outside of its definition
+   - Exclude test files from caller search (tests don't count as callers)
+   - Exclude the method's own definition and comments
+
+3. **Build a dead code list:**
+   - Methods with **zero remaining callers** in non-test code
+   - Note the confidence level: **high** (no callers found) vs **medium** (only dynamic/ambiguous callers like `send(:method_name)`)
+
+4. **Keep this list** for use in Step 5 (review) and Step 6 (conflict detection).
+
+**Scope:** Only analyze methods/functions in files touched by the MR. Do not scan the entire codebase for pre-existing dead code.
+
+### Step 5: Code Review & Merge
+
+Apply the review criteria defined in `~/.claude/skills/code-review-criteria.md`.
+
+**Merging with reviewer feedback** (if `.claude/reviewer-feedback.md` exists):
+
+1. Start with all reviewer items (preserve exactly, mark as `👤 Reviewer`)
+2. Perform AI review and add AI items (mark as `🤖 AI`)
+3. For overlapping concerns (same file/area, similar issue):
+   - Keep reviewer's version as primary
+   - Add AI's additional context if valuable
+   - Mark as `🤖 AI + 👤 Reviewer`
+4. Number items sequentially within each priority section
+
+Write the review directly to `/project/docs/mr-review/code-review.md` (this is an absolute path, NOT relative to the project root) using this structure:
+
+```markdown
+# Code Review Summary
+
+**Branch:** <current-branch>
+**Base:** <base-branch>
+**Files Changed:** <count>
+**Lines:** +<additions> / -<deletions>
+
+## Decision Options
+
+- **Accept**: Will fix this issue
+- **Drop**: Issue is incorrect or not applicable (explain why)
+- **Won't Fix**: Valid issue but intentionally not addressing (explain why)
+
+## Approach Options
+
+- **Suggested fix**: Use the recommended fix as-is
+- **Alternative**: Your different approach (describe in Notes)
+
+---
+
+## Findings
+
+### 🔴 Blocking (Must Fix)
+
+#### 1. `<file_path:line>` - <brief title>
+- **Source:** 🤖 AI / 👤 Reviewer / 🤖 AI + 👤 Reviewer
+- **Issue:** <description of the problem>
+- **Suggestion:** <recommended fix>
+- **Status:** [ ] Pending
+- **Decision:** _Accept / Drop / Won't Fix_
+- **Approach:** _Suggested fix / Alternative_
+- **Notes:** _[Your response, alternative approach details, or discussion points]_
+
+---
+
+### 🟡 Important (Should Fix)
+
+#### 1. `<file_path:line>` - <brief title>
+- **Source:** 🤖 AI / 👤 Reviewer / 🤖 AI + 👤 Reviewer
+- **Issue:** <description>
+- **Suggestion:** <recommended fix>
+- **Status:** [ ] Pending
+- **Decision:** _Accept / Drop / Won't Fix_
+- **Approach:** _Suggested fix / Alternative_
+- **Notes:** _[Your response, alternative approach details, or discussion points]_
+
+---
+
+### 🟢 Nit (Nice to Have)
+
+#### 1. `<file_path:line>` - <brief title>
+- **Source:** 🤖 AI / 👤 Reviewer / 🤖 AI + 👤 Reviewer
+- **Issue:** <description>
+- **Suggestion:** <recommended fix>
+- **Status:** [ ] Pending
+- **Decision:** _Accept / Drop / Won't Fix_
+- **Approach:** _Suggested fix / Alternative_
+- **Notes:** _[Your response, alternative approach details, or discussion points]_
+
+---
+
+### 💡 Suggestions
+
+#### 1. `<file_path:line>` - <brief title>
+- **Source:** 🤖 AI / 👤 Reviewer / 🤖 AI + 👤 Reviewer
+- **Issue:** <description>
+- **Suggestion:** <recommended fix>
+- **Status:** [ ] Pending
+- **Decision:** _Accept / Drop / Won't Fix_
+- **Approach:** _Suggested fix / Alternative_
+- **Notes:** _[Your response, alternative approach details, or discussion points]_
+
+---
+
+## 🔗 Issue Relationships
+
+<!-- Added by Step 6 - see that step for format -->
+
+---
+
+## Verdict
+
+✅/❌ **<Verdict>** - <Summary explanation>
+
+## Key Insight
+
+<One sentence summary of the most important observation>
+```
+
+### Step 6: Dependency, Conflict & Dead Code Conflict Analysis
+
+After generating findings, analyze relationships between issues:
+
+1. **Same-location issues**: Items targeting the same file/method
+2. **Cascading fixes**: Fixing one issue may resolve another
+3. **Conflicting solutions**: Fixes that contradict or interfere with each other
+4. **Merge candidates**: Issues that should be addressed together
+5. **Dead code conflicts**: Cross-reference all findings against the dead code list from Step 4. If any finding (reviewer or AI) suggests changes to code identified as dead, flag it.
+
+**Add this section to `/project/docs/mr-review/code-review.md` (absolute path) before Verdict:**
+
+```markdown
+---
+
+## 🔗 Issue Relationships
+
+### Cascading Fixes
+<!-- Issues where fixing one resolves another -->
+- **#X resolves #Y**: <explanation>
+
+### Conflicts
+<!-- Fixes that may interfere with each other -->
+- **#X vs #Y**: <describe conflict and recommended resolution>
+
+### Dead Code Conflicts
+<!-- Findings that suggest changes to code with no remaining callers -->
+- **#X** targets `method_name` (`file:line`) which has no callers after this MR — consider removing instead of modifying. Confidence: high/medium.
+
+### Same-Location Changes
+<!-- Issues modifying the same code area - coordinate fixes -->
+- **#X, #Y, #Z** (`file:lines`): <coordination notes>
+
+### Recommended Fix Order
+<!-- Optimal sequence considering dependencies -->
+1. #X - <reason>
+2. #Y - <reason>
+```
+
+If no relationships found, add:
+```markdown
+## 🔗 Issue Relationships
+
+No dependencies or conflicts detected between findings.
+```
+
+### Step 7: Apply Source-Based Field Defaults
+
+After writing the review file, re-read `/project/docs/mr-review/code-review.md` (absolute path) and apply defaults based on each item's Source:
+
+- **👤 Reviewer** (or 🤖 AI + 👤 Reviewer) items: Set Decision to `Accept`, Approach to `Suggested fix`, and omit Notes
+- **🤖 AI** items: Leave Decision/Approach/Notes as placeholders for the reviewer to fill in
+
+Update the file in-place with these defaults applied.
+
+### Step 8: Commit Review
+
+1. Stage the review file:
+   ```
+   git add /project/docs/mr-review/code-review.md  # absolute path
+   ```
+
+2. Commit with message:
+   ```
+   Add code review for <current-branch>
+   ```
+
+## Output Files
+
+- `/project/docs/mr-review/code-review.md` (absolute path) - Code review with actionable findings
