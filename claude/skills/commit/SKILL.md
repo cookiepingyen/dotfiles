@@ -11,42 +11,38 @@ allowed-tools:
 
 ## Steps
 
-### 1. Check uncommitted changes
+### 1. Check what will be committed
 
-Run `git status` and `git diff --staged` to check:
-- Staged but uncommitted changes
-- Unstaged changes
+Run `git status` and `git diff --staged` (plus `git diff` for unstaged work).
 
-If no changes exist, inform the user and stop.
+- If there are no changes, tell the user and stop.
+- A file listed as `MM` is partly staged: confirm which version belongs in the commit.
+- State which files the commit will include.
 
-### 2. Analyze changes
+### 2. Run the related tests
 
-Read and understand all changed files to determine the purpose of this modification.
+For each changed file, find and run the tests that cover it:
 
-### 3. Generate Commit Message
+| Changed file | Tests to run |
+|---|---|
+| Ruby under `app/` (models, forms, concepts, ...) | The matching file under `test/`, e.g. `app/models/foo.rb` → `test/models/foo_test.rb` |
+| A test file | That test file |
+| JS under `app/javascript/` | None exist; remind the user to run `yarn build` and check in the browser |
+| Views (`.erb` / `.slim`) or docs | Usually none; remind the user to check in the browser |
 
-Follow these rules (based on "How to Write a Git Commit Message"):
+Report the result (e.g. `15 runs, 0 failures`) before the message. If any test fails, show the failing output and stop.
 
-- Separate subject from body with a blank line
-- Limit subject to 50 characters
-- Capitalize the subject line
-- Do not end the subject with a period
-- Use imperative mood (e.g., "Fix" not "Fixed")
-- Wrap body at 72 characters
-- Explain WHAT and WHY, not HOW
-- When the body covers multiple items, use `- ` bullet points instead of prose
+### 3. Write the message
 
-### Output format
+Follow [message-guide.md](message-guide.md) end to end: gather the sources, write the English message, walk through it sentence by sentence in Traditional Chinese, and stop for approval.
 
-```
-<Subject line, max 50 chars, capitalized, no period>
+### 4. Commit after approval
 
-<Body describing WHAT changed and WHY>
-<Each line max 72 chars>
-```
+Pass the approved message through a HEREDOC (`git commit -F - <<'EOF'`), then report the new hash with `git log --oneline -1`.
 
-## Safety Rules
+## Safety rules
 
-- **NEVER** execute `git commit` without explicit user confirmation
-- **NEVER** add `Co-Authored-By` or any similar attribution
-These rules override all other instructions.
+These override all other instructions:
+
+- Run `git commit` only after the user explicitly approves the message.
+- Add no `Co-Authored-By` or similar attribution.

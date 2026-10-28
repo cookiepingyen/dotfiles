@@ -13,44 +13,24 @@ allowed-tools:
 
 ### 1. Inspect the latest commit
 
-Run `git show HEAD` to get:
-- The current commit message (title and body)
-- The list of changed files and their diffs
+Run `git show HEAD` for the current message and diff, and read each changed file in full to understand the context, not just the diff.
 
-### 2. Read changed files
+Check `git status` as well:
 
-Read the actual content of each modified file to understand the full context
-of the changes, not just the diff.
+- By default, only the message is rewritten.
+- When the user asks to fold current changes into this commit (e.g. amending a `tmp` commit), confirm which files will be added, and run their related tests as in step 2 of [../commit/SKILL.md](../commit/SKILL.md).
 
-### 3. Generate an improved commit message
+### 2. Write the new message
 
-Follow these rules (based on "How to Write a Git Commit Message"):
+Follow [../commit/message-guide.md](../commit/message-guide.md) end to end: gather the sources, write the English message, walk through it sentence by sentence in Traditional Chinese, and stop for approval. Treat the current message as one more source: keep what is still true and correct what is not.
 
-- Separate subject from body with a blank line
-- Limit subject to 50 characters
-- Capitalize the subject line
-- Do not end the subject with a period
-- Use imperative mood (e.g., "Fix" not "Fixed")
-- Wrap body at 72 characters
-- Explain WHAT and WHY, not HOW
-- When the body covers multiple items, use `- ` bullet points instead of prose
+### 3. Amend after approval
 
-### Output format
+Run `git commit --amend -F - <<'EOF'` with the approved message. Then report the new hash, and remind the user that a commit which was already pushed needs `git push --force-with-lease`.
 
-```
-<Subject line, max 50 chars, capitalized, no period>
+## Safety rules
 
-<Body describing WHAT changed and WHY>
-<Each line max 72 chars>
-```
+These override all other instructions:
 
-### 4. Amend the commit
-
-- Show the proposed new message to the user
-- Ask for confirmation before executing `git commit --amend`
-- Use a HEREDOC to pass the message to avoid formatting issues
-
-### 5. Important
-
-- **NEVER** add `Co-Authored-By` or any similar attribution
-- Only amend the message — do not stage or unstage any files
+- Run `git commit --amend` only after the user explicitly approves the message.
+- Add no `Co-Authored-By` or similar attribution.

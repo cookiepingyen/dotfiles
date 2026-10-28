@@ -29,6 +29,23 @@ Based on the conversation topic, decide on:
 - A meaningful, descriptive filename (use snake_case, e.g., `feature_investigation.md`)
 - A clear document title
 
+#### Interpreting a path the user passes as an argument
+
+**A path argument is a DIRECTORY unless it ends in `.md`.** The user copies these
+straight out of VS Code's "Copy Relative Path", so every segment is a folder name —
+the last segment is not the filename.
+
+| Argument | Means | Result |
+|---|---|---|
+| `foo/bar` | directory `foo/bar/` | create `/project/docs/foo/bar/<you-name-it>.md` |
+| `foo/bar/` | directory (explicit) | same as above |
+| `foo/bar.md` | file | create `/project/docs/foo/bar.md` |
+| (none given) | — | pick both directory and filename yourself |
+
+So for a directory argument, `mkdir -p` the whole path and choose a descriptive
+snake_case filename yourself from the conversation topic. Do **not** turn the last
+segment into `<segment>.md`.
+
 If the conversation covers multiple topics, ask the user which aspect to focus on.
 
 ### 3. Structure the document
@@ -56,7 +73,8 @@ Use appropriate markdown syntax:
 
 ### 5. Save the file
 
-- Save to `/project/docs/` directory (absolute path: `/project/docs/`, not relative to current working directory)
+- Save under `/project/docs/` (absolute path: `/project/docs/`, not relative to current working directory)
+- If the user gave a directory argument, `mkdir -p` it first (see step 2)
 - Use descriptive filename (snake_case.md)
 - Confirm file creation success
 
